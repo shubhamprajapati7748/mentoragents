@@ -1,8 +1,9 @@
 # MentorAgents 🤖💡
 
-*Where Human Expertise Meets AI Intelligence*
+**Your personal mentors, anytime. Anywhere.**
 
-MentorAgents is an innovative AI-powered platform that brings legendary mentors to life through advanced conversational AI. Choose from iconic figures like Naval Ravikant, Elon Musk, Warren Buffett, and other thought leaders to get personalized guidance, insights, and mentorship on demand.
+MentorAgents is an AI-powered platform where users interact with agents modeled after legendary real-world experts—like Elon Musk for startups, Naval Ravikant for wealth, or Lex Fridman for AI. Ask questions, get tailored guidance, and learn from the best minds — anytime, anywhere.
+
 
 ## 🚀 Features
 
