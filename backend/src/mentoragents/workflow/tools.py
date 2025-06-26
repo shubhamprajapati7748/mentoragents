@@ -1,0 +1,29 @@
+from langchain.tools.retriever import create_retriever_tool 
+from src.mentoragents.core.config import settings 
+from src.mentoragents.rag.retrievers import Retriever 
+
+class Tools:
+    """
+    A class that contains the tools for the Model response.
+    """
+    def __init__(self):
+        """
+        Initialize the tools.
+        """
+        retriever = Retriever(
+            embedding_model_id = settings.EMBEDDING_MODEL_ID,
+            k = settings.K,
+            device = settings.DEVICE
+        )
+        self.mongodb_retriever = retriever.get_mongodb_retriever()
+
+        self.retriever_tool = create_retriever_tool(
+            self.mongodb_retriever, 
+            name = "retrieve_mentor_context", 
+            description = "Search and return information about the specific mentor. Always use this tool when the user asks about the mentor's background, expertise, or any other information related to the mentor.")
+
+    def get_tools(self):
+        """
+        Get the tools.
+        """
+        return [self.retriever_tool]
