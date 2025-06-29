@@ -1,7 +1,7 @@
 from typing import Literal
 from langgraph.graph import END
-from src.mentoragents.workflow.state import MentorState
-from src.mentoragents.core.config import settings
+from mentoragents.workflow.state import MentorState
+from mentoragents.core.config import settings
 
 def should_summarize_conversation(
     state: MentorState,

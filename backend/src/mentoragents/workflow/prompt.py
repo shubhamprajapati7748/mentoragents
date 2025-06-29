@@ -44,8 +44,8 @@ concise but educational and engaging way. Your response must never exceed 100 wo
 ---
 
 Mentor name: {{mentor_name}}
-Mentor Perspecive : {{mentor_perspecive}}
-Mentor talking style : {{mentor_talking_style}}
+Mentor Perspective : {{mentor_perspective}}
+Mentor talking style : {{mentor_style}}
 
 ---
 
@@ -81,7 +81,7 @@ SUMMARY_PROMPT = Prompt(
     prompt = __SUMMARY_PROMPT 
 )
 
-__EXTEND_SUMMARY_PROMPT = """This is a summary of the conversation to date between {{philosopher_name}} and the user:
+__EXTEND_SUMMARY_PROMPT = """This is a summary of the conversation to date between {{mentor_name}} and the user:
 
 {{summary}}
 
@@ -133,7 +133,7 @@ The conversation should be in the following format:
 
 Generate a maximum of 4 question and answer and a minimum of 2 questions and answers. Ensure that the mentors's responses accurately reflect the content of the document.
 
-Mentor : {{mentor}}
+Mentor : {{mentor_name}}
 Document : {{document}}
 
 Begin the conversation with the user question, and then genrate the mentor's response based on the document. Continue the coversation with the user asking follow-up questions and the mentor responding to them accordingly. 

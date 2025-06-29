@@ -19,7 +19,6 @@ class Embeddings:
         logger.info(f"Initializing HuggingFaceEmbeddings with model name: {self.model_name} and device: {self.device}")
         return HuggingFaceEmbeddings(
             model_name = self.model_name,
-            model_kwargs = {"device": self.device},
-            encode_kwargs = {"normalize_embeddings": True},
-            trust_remote_code = True
+            model_kwargs={"device": self.device, "trust_remote_code": True},
+            encode_kwargs={"normalize_embeddings": False},
         )

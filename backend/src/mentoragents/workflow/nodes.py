@@ -1,8 +1,10 @@
-from src.mentoragents.workflow.state import MentorState 
-from src.mentoragents.core.config import settings
-from src.mentoragents.workflow.chains import Chains
+from mentoragents.workflow.state import MentorState 
+from mentoragents.core.config import settings
+from mentoragents.workflow.chains import Chains
 from langchain_core.messages import RemoveMessage
 from langchain_core.runnables import RunnableConfig
+from langgraph.prebuilt import ToolNode
+from mentoragents.workflow.tools import Tools
 
 class Nodes:
     """
@@ -10,29 +12,32 @@ class Nodes:
     """
     def __init__(self):
         self.chains = Chains()
-        self.config = RunnableConfig
+        self.tools = Tools().get_tools()
     
-    async def conversation_node(self, state : MentorState) -> MentorState: 
+    async def conversation_node(self, state : MentorState, config : RunnableConfig) -> MentorState: 
         """
         Node to handle the conversation between the mentor and the user.
         """
+        summary = state.get("summary", "")
         conversation_chain = self.chains.get_mentor_resonse_chain()
         response = await conversation_chain.ainvoke(
             {
                 "messages" : state["messages"],
+                "summary" : summary,
                 "mentor_name" : state["mentor_name"],
                 "mentor_expertise" : state["mentor_expertise"],
                 "mentor_perspective" : state["mentor_perspective"],
-                "mentor_talking_style" : state["mentor_talking_style"],
-                "summary" : state.get("summary", ""),
+                "mentor_style" : state["mentor_style"],
             },
-            config = self.config
+            config
         )
         state["messages"].append(response)
         return state 
-      
 
-    async def summarize_conversation_node(self, state : MentorState) -> MentorState: 
+    async def retrieve_context_node(self, state : MentorState) -> MentorState:
+        return ToolNode(self.tools)
+
+    async def summarize_conversations_node(self, state : MentorState) -> MentorState: 
         """
         Node to handle the summarization of the conversation between the mentor and the user.
         """
@@ -42,9 +47,8 @@ class Nodes:
             {
                 "messages" : state["messages"],
                 "mentor_name" : state["mentor_name"],
-                "summary" : summary,
-            },
-            config = self.config
+                "summary" : summary
+            }
         )
 
         delete_messages = [

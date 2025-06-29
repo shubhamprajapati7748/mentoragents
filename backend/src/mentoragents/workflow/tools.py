@@ -1,6 +1,6 @@
 from langchain.tools.retriever import create_retriever_tool 
-from src.mentoragents.core.config import settings 
-from src.mentoragents.rag.retrievers import Retriever 
+from mentoragents.core.config import settings 
+from mentoragents.rag.retrievers import Retriever 
 
 class Tools:
     """
@@ -11,9 +11,9 @@ class Tools:
         Initialize the tools.
         """
         retriever = Retriever(
-            embedding_model_id = settings.EMBEDDING_MODEL_ID,
-            k = settings.K,
-            device = settings.DEVICE
+            embedding_model_id = settings.RAG_TEXT_EMBEDDING_MODEL_ID,
+            k = settings.RAG_TOP_K,
+            device = settings.RAG_DEVICE
         )
         self.mongodb_retriever = retriever.get_mongodb_retriever()
 

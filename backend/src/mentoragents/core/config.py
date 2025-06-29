@@ -54,10 +54,11 @@ class Settings(BaseSettings):
     
     # --- OpenAI Configuration (Required for evaluation) ---
     OPENAI_API_KEY : str 
+    OPENAI_LLM_MODEL : str = "gpt-4o-mini"
 
     # --- MongoDB Configuration ---
     MONGO_URI : str = Field(
-        default="mongodb://philoagents:philoagents@local_dev_atlas:27017/?directConnection=true",
+        default="mongodb://mentor_user:mentor_password@localhost:27017/?directConnection=true",
         description="Connection URI for the local MongoDB Atlas instance.",
     )
     MONGO_DB_NAME : str = "mentoragents"

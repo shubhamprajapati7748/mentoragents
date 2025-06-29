@@ -3,9 +3,9 @@
 from functools import lru_cache 
 from langgraph.graph import START, END, StateGraph 
 from langgraph.prebuilt import tools_condition
-from src.mentoragents.workflow.state import MentorState 
-from src.mentoragents.workflow.edges import should_summarize_conversation
-from src.mentoragents.workflow.nodes import Nodes
+from mentoragents.workflow.state import MentorState 
+from mentoragents.workflow.edges import should_summarize_conversation
+from mentoragents.workflow.nodes import Nodes
 
 class MentorGraph:
     """
@@ -51,6 +51,6 @@ class MentorGraph:
 
         return self.graph_builder
     
-    def compile(self) : 
+    def compile(self):
         """Compile the graph.""" 
         return self.build().compile()

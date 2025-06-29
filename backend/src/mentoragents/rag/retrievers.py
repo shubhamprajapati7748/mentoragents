@@ -1,8 +1,10 @@
 from .embeddings import Embeddings
 from langchain_mongodb import MongoDBAtlasVectorSearch
-from langchain_mongodb.retrievers import MongoDBAtlasVectorSearchRetriever 
+from langchain_mongodb.retrievers import (
+    MongoDBAtlasHybridSearchRetriever,
+)
 from loguru import logger  
-from src.mentoragents.core.config import settings 
+from mentoragents.core.config import settings 
 
 class Retriever:
     """
@@ -13,34 +15,29 @@ class Retriever:
         Initializes the Retriever with an embedding model and a k value.
         """
         self.k = k
+        self.embedding_model_id = embedding_model_id
         self.embeddings_model = Embeddings(embedding_model_id, device).get_hf_model()
 
     def get_mongodb_retriever(self):
         """
         Returns a MongoDBAtlasVectorSearchRetriever object that retrieves documents from the MongoDB Atlas vector search.
         """
-        logger.info(f"Initializing MongoDBAtlasVectorSearchRetriever with embedding model: {self.embeddings_model_id} and k: {self.k}")
+        logger.info(f"Initializing MongoDBAtlasVectorSearchRetriever with embedding model: {self.embedding_model_id} and k: {self.k}")
         vector_store = MongoDBAtlasVectorSearch.from_connection_string(
-            connection_string = settings.MONGODB_CONNECTION_STRING,
-            namespace = f"{settings.MONGODB_NAMESPACE}.{settings.MONGO_LONG_TERM_MEMORY_COLLECTION}",
-            text_key = "chunk",
-            embedding_key = "embedding",
-            relevance_score_fn = "dotProduct"
+            connection_string=settings.MONGO_URI,
+            embedding=self.embeddings_model,
+            namespace=f"{settings.MONGO_DB_NAME}.{settings.MONGO_LONG_TERM_MEMORY_COLLECTION}",
+            text_key="chunk",
+            embedding_key="embedding",
+            relevance_score_fn="dotProduct",
         )
-        retriever = MongoDBAtlasVectorSearchRetriever(
-            vector_store = vector_store,
-            search_index_name = "hybrid_search_index",
-            embedding_model = self.embeddings_model,
-            k = self.k,
-            vector_penalty = 50,
-            fulltext_penalty = 50,
+
+        retriever = MongoDBAtlasHybridSearchRetriever(
+            vectorstore=vector_store,
+            search_index_name="hybrid_search_index",
+            top_k=self.k,
+            vector_penalty=50,
+            fulltext_penalty=50,
         )
+        
         return retriever
-
-
-
-
-
-
-    
-    

@@ -1,6 +1,6 @@
 from langchain_openai import ChatOpenAI
 from langchain_groq import ChatGroq
-from src.mentoragents.core.config import settings
+from mentoragents.core.config import settings
 
 class Models:
     """
@@ -17,6 +17,7 @@ class Models:
         )
 
         self.openai_model = ChatOpenAI(
+            api_key=settings.OPENAI_API_KEY,
             model_name=model_name,
             temperature=0.7,
         )

@@ -1,8 +1,8 @@
-from src.mentoragents.workflow.models import Models
-from src.mentoragents.workflow.prompt import MENTOR_CHARACTER_PROMPT, SUMMARY_PROMPT, CONTEXT_SUMMARY_PROMPT, EXTEND_SUMMARY_PROMPT
-from src.mentoragents.workflow.tools import Tools
+from mentoragents.workflow.models import Models
+from mentoragents.workflow.prompt import MENTOR_CHARACTER_PROMPT, SUMMARY_PROMPT, CONTEXT_SUMMARY_PROMPT, EXTEND_SUMMARY_PROMPT
+from mentoragents.workflow.tools import Tools
 from langchain_core.prompts import ChatPromptTemplate, MessagesPlaceholder
-from src.mentoragents.core.config import settings
+from mentoragents.core.config import settings
 
 class Chains:
     """
@@ -12,7 +12,8 @@ class Chains:
         """
         Initialize the chains.
         """
-        self.base_model = Models(settings.GROQ_LLM_MODEL).get_groq_model()
+        self.groq_model = Models(settings.GROQ_LLM_MODEL).get_groq_model()
+        self.openai_model = Models(settings.OPENAI_LLM_MODEL).get_openai_model()
         self.summary_model = Models(settings.GROQ_LLM_MODEL_CONTEXT_SUMMARY).get_groq_model()
         self.tools = Tools().get_tools()    
 
@@ -20,11 +21,11 @@ class Chains:
         """
         Get the chain for the mentor response.
         """
-        system_prompt = MENTOR_CHARACTER_PROMPT
-        model = self.base_model.bind_tools(self.tools)
+        system_message = MENTOR_CHARACTER_PROMPT
+        model = self.openai_model.bind_tools(self.tools)
         prompt = ChatPromptTemplate.from_messages(
             [
-                ("system", system_prompt),
+                ("system", system_message.prompt),
                 MessagesPlaceholder(variable_name="messages"),
             ],
             template_format = "jinja2"
@@ -38,12 +39,12 @@ class Chains:
         summary_message = EXTEND_SUMMARY_PROMPT if summary else SUMMARY_PROMPT
         prompt = ChatPromptTemplate.from_messages(
             [
-                MessagesPlaceholder(variation_name="messages"),
-                ("human", summary_message.prompt)
+                MessagesPlaceholder(variable_name="messages"),
+                ("human", summary_message.prompt),
             ],
             template_format = "jinja2"
         )
-        return prompt | self.base_model 
+        return prompt | self.openai_model 
 
     def get_context_summary_chain(self):
         """

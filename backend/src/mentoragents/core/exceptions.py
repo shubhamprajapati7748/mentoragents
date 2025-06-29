@@ -49,3 +49,33 @@ def unpack_validation_error(exc : ValidationError) -> dict:
         error_messages.append({field: message})
 
     return {"errors": error_messages}
+
+
+class MentorNameNotFoundException(Exception):
+    """Esception raised when a mentor name is not found."""
+    def __init__(self, mentor_id : str):
+        self.message = f"Mentor name for id {mentor_id} not found."
+        super().__init__(self.message) 
+    
+class MentorPerspectiveNotFoundException(Exception):
+    """Exception raised when a mentor perspective is not found"""
+    def __init__(self, mentor_id : str):
+        self.message = f"Mentor perspective for id {mentor_id} not found."
+        super().__init__(self.message)
+    
+class MentorStyleNotFoundException(Exception):
+    """Exception raised when a mentor style is not found"""
+    def __init__(self, mentor_id : str):
+        self.message = f"Mentor style for id {mentor_id} not found."
+        super().__init__(self.message)
+    
+class MentorExpertiseNotFoundException(Exception):
+    """Exception raised when a mentor expertise is not found"""
+    def __init__(self, mentor_id : str):
+        self.message = f"Mentor expertise for id {mentor_id} not found."
+        super().__init__(self.message)
+    
+class MentorNotFoundException(Exception):
+    """Exception raised when a mentor is not found"""
+    def __init__(self, mentor_id : str):
+        self.message = f"Mentor for id {mentor_id} not found."
