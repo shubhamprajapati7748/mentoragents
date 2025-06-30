@@ -15,7 +15,7 @@ class Tools:
             k = settings.RAG_TOP_K,
             device = settings.RAG_DEVICE
         )
-        self.mongodb_retriever = retriever.get_mongodb_retriever()
+        self.mongodb_retriever = retriever.get_hybrid_search_mongodb_retriever()
 
         self.retriever_tool = create_retriever_tool(
             self.mongodb_retriever, 

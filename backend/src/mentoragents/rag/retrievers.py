@@ -10,7 +10,7 @@ class Retriever:
     """
     A class that retrieves documents from the MongoDB Atlas vector search.
     """
-    def __init__(self, embedding_model_id : str, k : int = 3, device : str = "cpu"):
+    def __init__(self, embedding_model_id : str, k : int = 3, device : str = "cpu") -> None:
         """
         Initializes the Retriever with an embedding model and a k value.
         """
@@ -18,7 +18,7 @@ class Retriever:
         self.embedding_model_id = embedding_model_id
         self.embeddings_model = Embeddings(embedding_model_id, device).get_hf_model()
 
-    def get_mongodb_retriever(self):
+    def get_hybrid_search_mongodb_retriever(self) -> MongoDBAtlasHybridSearchRetriever:
         """
         Returns a MongoDBAtlasVectorSearchRetriever object that retrieves documents from the MongoDB Atlas vector search.
         """

@@ -2,7 +2,10 @@ from typing import Optional
 from pydantic_settings import BaseSettings 
 from pydantic import Field, field_validator
 from pydantic_settings import SettingsConfigDict
+from pathlib import Path
+from dotenv import load_dotenv
 
+load_dotenv()
 
 class Settings(BaseSettings):
     """Pydantic settings class.
@@ -110,7 +113,7 @@ class Settings(BaseSettings):
 
     # --- Paths Configuration ---
     # EVALUATION_DATASET_FILE_PATH : Path = Path("data/evaluation_dataset.json")
-    # EXTRACTION_METADATA_FILE_PATH : Path = Path("data/extraction_metadata.json")
+    EXTRACTION_METADATA_FILE_PATH : Path = Path("../rag/data/extraction_metadata.json")
 
     model_config = SettingsConfigDict(
         env_file=".env",
