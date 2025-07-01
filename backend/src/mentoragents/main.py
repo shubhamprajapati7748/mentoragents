@@ -1,5 +1,4 @@
-from fastapi import FastAPI
-from contextlib import asynccontextmanager
+from fastapi import FastAPI,  HTTPException, Depends, WebSocket, WebSocketDisconnect
 from mentoragents.core.config import settings
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import HTMLResponse 
@@ -9,22 +8,45 @@ from fastapi.exceptions import RequestValidationError
 from pydantic import ValidationError
 from mentoragents.core.exceptions import PermissionException, NotFoundException
 from mentoragents.core.handlers import validation_exception_handler, permission_exception_handler, not_found_exception_handler
+from pydantic import BaseModel
+from mentoragents.utils.generate_response import get_response, get_streaming_response
+from mentoragents.utils.reset_conversation import reset_conversation_state
+from mentoragents.models.mentor_factory import MentorFactory
+from mentoragents.workflow.graph import MentorGraph
 
-@asynccontextmanager
-async def lifespan(app: FastAPI):
-    """Handles startup and shutdown events for the API."""
-    # Startup code (if any) goes here
-    yield
-    # Shutdown code goes here
-    # opik_tracer = OpikTracer()
-    # opik_tracer.flush()
+# Application state management 
+class ApplicationState:
+    def __init__(self):
+        self.graph_builder = None
+    
+    async def initialize(self):
+        graph = MentorGraph()
+        self.graph_builder = graph.build()
+
+    async def shutdown(self):
+        self.graph_builder = None
+
+class ChatMessage(BaseModel):
+    message : str
+    mentor_id : str
 
 app = FastAPI(
     title=settings.PROJECT_NAME,
     openapi_url="/openapi.json",
-    lifespan=lifespan,
-    redirect_slashes=False,  # Critical: disable FastAPI's built-in slash redirects
+    docs_url="/docs",
+    description="AI agents, trained by the minds that move the world.",
+    version="0.1.0",
+    # lifespan=lifespan,
 )
+
+@app.on_event("startup")
+async def startup_event():
+    app.state.app_state = ApplicationState()
+    await app.state.app_state.initialize()
+    
+@app.on_event("shutdown")
+async def shutdown_event():
+    await app.state.app_state.shutdown()
 
 CORS_ORIGINS = [
     "http://localhost:5173",
@@ -47,6 +69,10 @@ app.add_middleware(
     allow_methods=["*"],
     allow_headers=["*"],
 )
+
+# Dependency injection
+async def get_graph_builder():
+    return app.state.app_state.graph_builder
 
 # Exception handlers
 app.exception_handler(RequestValidationError)(validation_exception_handler)
@@ -77,6 +103,101 @@ async def show_docs_reference() -> HTMLResponse:
     """
     return HTMLResponse(content=html_content)
 
+@app.post("/chat")
+async def chat(
+    chat_messages : ChatMessage,
+    graph_builder : MentorGraph = Depends(get_graph_builder)
+):
+    """
+    Handle the chat message and return the response.
+    """
+    try:
+        mentor = MentorFactory.get_financial_mentor(chat_messages.mentor_id)
+        response, _ = await get_response(
+            graph_builder = graph_builder,
+            messages = chat_messages.message,
+            mentor_id = chat_messages.mentor_id,
+            mentor_name = mentor.mentor_name,
+            mentor_expertise = mentor.mentor_expertise,
+            mentor_perspective = mentor.mentor_perspective,
+            mentor_style = mentor.mentor_style,
+            mentor_context = ""
+        )
+        return {
+            "response" : response,
+        }
+    except Exception as e : 
+        raise HTTPException(status_code=500, detail=str(e))
+
+
+@app.websocket("/ws/chat")
+async def websocket_chat(
+    websocket : WebSocket,
+    graph_builder : MentorGraph = Depends(get_graph_builder)
+):
+    """
+    Handle the websocket chat message and return the response.
+    """
+    await websocket.accept()
+    try:
+        while True:
+            data = await websocket.receive_json()
+
+            if "message" not in data or "mentor_id" not in data:
+                await websocket.send_json({
+                    "error" : "Invalid message format. Required fields : 'message' and 'mentor_id'"
+                })
+                continue 
+        
+            try:
+                message = data["message"]
+                mentor_id = data["mentor_id"]
+
+                mentor = MentorFactory.get_financial_mentor(mentor_id)
+
+                # Use streaming response to get the response
+                streaming_response = get_streaming_response(
+                    graph_builder = graph_builder,
+                    messages = message,
+                    mentor_id = mentor_id,
+                    mentor_name = mentor.mentor_name,
+                    mentor_expertise = mentor.mentor_expertise,
+                    mentor_perspective = mentor.mentor_perspective,
+                    mentor_style = mentor.mentor_style,
+                    mentor_context = ""
+                )
+
+                # Send initial message to indicate streaming has started
+                await websocket.send_json({"streaming" : True})
+
+                # Stream each chunk of the response 
+                async for chunk in streaming_response:
+                    full_response += chunk 
+                    await websocket.send_json({"chunk" : chunk})
+
+                # Send final message to indicate streaming has ended
+                await websocket.send_json({"streaming" : False, "response" : full_response})
+            except Exception as e:
+                await websocket.send_json({"error" : str(e)})
+                break
+            
+    except WebSocketDisconnect:
+        pass
+    
+
+
+@app.post("/reset-memory")
+async def reset_memory():
+    """
+    Reset the conversation state. It deletes the two collections needed for the keeping short-term memory in MongoDB
+    """
+    try:
+        result = await reset_conversation_state()
+        return result
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e))
+
+
 
 if __name__ == "__main__":
     settings = Settings()
@@ -87,3 +208,4 @@ if __name__ == "__main__":
         reload=settings.RELOAD,
         log_config=None,  # We use structlog for logging
     ) 
+

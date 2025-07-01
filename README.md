@@ -108,9 +108,10 @@ MentorAgents is an AI-powered platform where users interact with agents modeled 
    COMET_API_KEY=your_comet_api_key (optional)
    ```
 
-4. **Start the backend server**
-   ```bash
-   python -m mentoragents.main
+4. **Run the backend**
+    ```bash
+   cd backend
+   uvicorn mentoragents.main:app --reload --host 127.0.0.1 --port 8080
    ```
 
    The API will be available at `http://localhost:8000`

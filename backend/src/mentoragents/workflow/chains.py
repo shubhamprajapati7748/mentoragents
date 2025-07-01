@@ -17,7 +17,7 @@ class Chains:
         self.summary_model = Models(settings.GROQ_LLM_MODEL_CONTEXT_SUMMARY).get_groq_model()
         self.tools = Tools().get_tools()    
 
-    def get_mentor_resonse_chain(self):
+    def get_mentor_response_chain(self):
         """
         Get the chain for the mentor response.
         """

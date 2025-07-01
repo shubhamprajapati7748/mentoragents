@@ -1,6 +1,7 @@
 from langchain.tools.retriever import create_retriever_tool 
 from mentoragents.core.config import settings 
 from mentoragents.rag.retrievers import Retriever 
+from loguru import logger
 
 class Tools:
     """
