@@ -4,7 +4,6 @@
 
 MentorAgents is an AI-powered platform where users interact with agents modeled after legendary real-world experts—like Elon Musk for startups, Naval Ravikant for wealth, or Lex Fridman for AI. Ask questions, get tailored guidance, and learn from the best minds — anytime, anywhere.
 
-
 ## 🚀 Features
 
 - **Legendary Mentor AI Agents**: Chat with AI versions of famous entrepreneurs, investors, and thought leaders
@@ -108,15 +107,20 @@ MentorAgents is an AI-powered platform where users interact with agents modeled 
    COMET_API_KEY=your_comet_api_key (optional)
    ```
 
+4. **To Create long term memory**
+    ```bash
+   python src/mentoragents/tools/create_long_term_memory.py
+   ```
+
 4. **Run the backend**
     ```bash
    cd backend
    uvicorn mentoragents.main:app --reload --host 127.0.0.1 --port 8080
    ```
 
-   The API will be available at `http://localhost:8000`
+   The API will be available at `http://localhost:8080`
 
-### Frontend Setup
+<!-- ### Frontend Setup
 
 ```bash
 cd frontend
@@ -124,13 +128,12 @@ npm install
 npm start
 ```
 
-The web app will be available at `http://localhost:3000`
+The web app will be available at `http://localhost:3000` -->
 
 ## 📖 API Documentation
 
 Once the backend is running, visit:
-- **Swagger UI**: `http://localhost:8000/docs`
-- **ReDoc**: `http://localhost:8000/redoc`
+- **Swagger UI**: `http://localhost:8080/docs`
 
 ## 🤖 Available Mentors
 
@@ -190,11 +193,17 @@ This project is licensed under the MIT License - see the [LICENSE](LICENSE) file
 - The mentors whose wisdom inspired this project
 - Open source contributors making AI accessible
 
-## 📞 Support
+
+## **📧 Contact & Support**
+
+- Shubham Prajapati - [shubhamprajapati7748@gmail.com](mailto:shubhamprajapati7748@gmail.com)
+
+
+<!-- ## 📞 Support
 
 - **Documentation**: [docs.mentoragents.ai](https://docs.mentoragents.ai)
-- **Issues**: [GitHub Issues](https://github.com/yourusername/mentoragents/issues)
-- **Discord**: [Join our community](https://discord.gg/mentoragents)
+- **Issues**: [GitHub Issues](https://github.com/shubhamprajapati7748/mentoragents/issues)
+- **Discord**: [Join our community](https://discord.gg/mentoragents) -->
 
 ---
 

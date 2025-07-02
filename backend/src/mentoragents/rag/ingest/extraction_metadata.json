@@ -1,0 +1,20 @@
+[
+  {
+    "id": "naval_ravikant",
+    "name": "Naval Ravikant",
+    "expertise": "Investing, Entrepreneurship, Philosophy",
+    "perspective": "Naval sees wealth as something you build through specific knowledge, leverage, and judgment—not just saving money.",
+    "style": "Minimalist, long-term thinker who combines Eastern philosophy with Western capitalism.",
+    "image_url": "https://pbs.twimg.com/profile_images/1598230333357971456/00000000000000000000000000000000_400x400.jpg",
+    "twitter_handle": "naval",
+    "pdf": [
+      "https://navalmanack.s3.amazonaws.com/Eric-Jorgenson_The-Almanack-of-Naval-Ravikant_Final.pdf"
+    ],
+    "websites": [
+      "https://nav.al"
+    ],
+    "youtube_videos": [
+      "https://www.youtube.com/watch?v=3qHkcs3kG44"
+    ]
+  }
+]

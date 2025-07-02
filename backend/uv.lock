@@ -130,6 +130,23 @@ wheels = [
 ]
 
 [[package]]
+name = "arcadepy"
+version = "1.6.0"
+source = { registry = "https://pypi.org/simple" }
+dependencies = [
+    { name = "anyio" },
+    { name = "distro" },
+    { name = "httpx" },
+    { name = "pydantic" },
+    { name = "sniffio" },
+    { name = "typing-extensions" },
+]
+sdist = { url = "https://files.pythonhosted.org/packages/0b/9b/099d92a47e6147b087b4df42540fe865cef95ab3d2c3a3742be3ed4a569c/arcadepy-1.6.0.tar.gz", hash = "sha256:7d3851a5b38a5af28173db8499195682b58aa735dd0adbcf82bd1e2e048abd9a", size = 116803, upload-time = "2025-06-18T17:37:13.269Z" }
+wheels = [
+    { url = "https://files.pythonhosted.org/packages/8f/06/c2b6e7b7f82e44fca8939301dae9a719cc3c6e63da9c2f87b24d572a2c9e/arcadepy-1.6.0-py3-none-any.whl", hash = "sha256:c4c98b038f6565cbae8440976d15587aac97703e43fc415d0f1e13aca245e4a9", size = 112965, upload-time = "2025-06-18T17:37:12.265Z" },
+]
+
+[[package]]
 name = "asttokens"
 version = "3.0.0"
 source = { registry = "https://pypi.org/simple" }
@@ -1374,6 +1391,7 @@ name = "mentoragents"
 version = "0.1.0"
 source = { editable = "." }
 dependencies = [
+    { name = "arcadepy" },
     { name = "datasketch" },
     { name = "fastapi", extra = ["standard"] },
     { name = "ipykernel" },
@@ -1398,6 +1416,7 @@ dependencies = [
 
 [package.metadata]
 requires-dist = [
+    { name = "arcadepy", specifier = ">=1.6.0" },
     { name = "datasketch", specifier = ">=1.6.5" },
     { name = "fastapi", extras = ["standard"], specifier = ">=0.115.8" },
     { name = "ipykernel", specifier = ">=6.29.5" },

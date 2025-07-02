@@ -7,8 +7,8 @@ from mentoragents.core.config import settings
 from mentoragents.models.mentor import Mentor
 from loguru import logger
 from mentoragents.db.client import MongoClientWrapper
-from mentoragents.rag.data.extracter import Extracter
-from mentoragents.rag.data.deduplicate_documents import DeduplicateDocuments
+from mentoragents.rag.extracter import Extracter
+from mentoragents.rag.deduplicate_documents import DeduplicateDocuments
 from mentoragents.db.indexes import MongoIndex
 from mentoragents.models.mentor_extract import MentorExtract
 
@@ -16,6 +16,14 @@ class LongTermMemoryCreator:
     def __init__(self, retriever : MongoDBAtlasHybridSearchRetriever, splitter : RecursiveCharacterTextSplitter) -> None:
         self.retriever = retriever
         self.splitter = splitter
+        self.deduplicate_documents = DeduplicateDocuments()
+        self.extractor = Extracter()
+        self.mongo_client_wrapper = MongoClientWrapper(
+            model = Document, 
+            collection_name = settings.MONGO_LONG_TERM_MEMORY_COLLECTION,
+            database_name = settings.MONGO_DB_NAME,
+            mongodb_uri = settings.MONGO_URI
+        )
 
     @classmethod
     def build(cls) -> "LongTermMemoryCreator":
@@ -36,32 +44,21 @@ class LongTermMemoryCreator:
             logger.warning("No mentors to extract. Exiting...")
         
         # First clear the long term memory collection to avoid duplicates
-        with MongoClientWrapper(
-            model = Document, 
-            collection_name = settings.MONGO_LONG_TERM_MEMORY_COLLECTION,
-            database_name = settings.MONGO_DB_NAME,
-            mongodb_uri = settings.MONGO_URI
-        ) as client:
-            client.clear_collection()
+        self.mongo_client_wrapper.clear_collection()
 
         # Extract documents from sources
-        extraction_generator = Extracter().get_extraction_generator(mentors)
+        extraction_generator = self.extractor.get_extraction_generator(mentors)
 
         # Ingest documents into the long term memory collection
         for _, docs in extraction_generator:
             chunked_docs = self.splitter.split_documents(docs)
-            chunked_docs = DeduplicateDocuments().remove_duplicates(chunked_docs)
+            chunked_docs = self.deduplicate_documents.remove_duplicates(chunked_docs)
             self.retriever.vectorstore.add_documents(chunked_docs)
 
         self.__create_index() # Todo : Uncomment this when the index is created
 
     def __create_index(self) -> None:
-        with MongoClientWrapper(
-            model = Document, 
-            collection_name = settings.MONGO_LONG_TERM_MEMORY_COLLECTION,
-            database_name = settings.MONGO_DB_NAME,
-            mongodb_uri = settings.MONGO_URI
-        ) as client:
+        with self.mongo_client_wrapper as client:
             self.index = MongoIndex(
                 retriever = self.retriever,
                 client = client

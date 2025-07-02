@@ -113,7 +113,11 @@ class Settings(BaseSettings):
 
     # --- Paths Configuration ---
     # EVALUATION_DATASET_FILE_PATH : Path = Path("data/evaluation_dataset.json")
-    EXTRACTION_METADATA_FILE_PATH : Path = Path("../rag/data/extraction_metadata.json")
+    EXTRACTION_METADATA_FILE_PATH : Path = Path("src/mentoragents/rag/ingest/extraction_metadata.json")
+
+    # --- Arcade Configuration ---
+    ARCADE_API_KEY : str
+    ARCADE_USER_ID : str
 
     model_config = SettingsConfigDict(
         env_file=".env",

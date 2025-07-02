@@ -1,17 +1,18 @@
 from langchain_core.documents import Document 
 from mentoragents.models.mentor import Mentor
-from langchain_community.document_loaders import WikipediaLoader
 from typing import Generator
 from tqdm import tqdm
 from mentoragents.models.mentor_factory import MentorFactory
 from loguru import logger
 from mentoragents.models.mentor_extract import MentorExtract
+from mentoragents.rag.ingest.extract_wikipedia import extract_wikipedia
+from mentoragents.rag.ingest.extract_twitter_tweets import extract_twitter_tweets
 
 class Extracter:
     def __init__(self):
         pass
 
-    def extract(self, mentor : Mentor) -> list[Document]:
+    def extract(self, mentor_extract : MentorExtract) -> list[Document]:
         """Extract documents for a single mentor from all the sources and duduplicats them. 
 
         Args:
@@ -20,35 +21,11 @@ class Extracter:
         Returns:
             list[Document] : List of deduplicated documents extracts for the mentor.
         """ 
-        logger.info(f"Extracting docs for {mentor.mentor_name}")
+        logger.info(f"Extracting docs for {mentor_extract.name}")
         docs = []
-        docs.extend(self.extract_wikipedia(mentor))
-        logger.info(f"Extracted {len(docs)} docs for {mentor.mentor_name}")
-        return docs 
-
-    def extract_wikipedia(self, mentor : Mentor) -> list[Document]:
-        """Extract documents from  Wikipredia for a given mentor.
-
-        Args:
-            mentor : Mentor object containing mentor details.
-
-        Returns:
-            list[Document] : List of documents extracted from Wikipedia.
-        """
-        logger.info(f"Extracting docs from Wikipedia for {mentor.mentor_name}")
-        data_loader = WikipediaLoader(
-            query = mentor.mentor_name,
-            lang = "en",
-            load_max_docs = 10,
-            doc_content_chars_max = 1000000,
-        )
-
-        docs = data_loader.load()
-
-        for doc in docs:
-            doc.metadata["mentor_id"] = mentor.id
-            doc.metadata["mentor_name"] = mentor.mentor_name
-        logger.info(f"Extracted {len(docs)} docs from Wikipedia for {mentor.mentor_name}")
+        docs.extend(extract_wikipedia(mentor_extract))
+        docs.extend(extract_twitter_tweets(mentor_extract))
+        logger.info(f"Extracted {len(docs)} docs for {mentor_extract.name}")
         return docs 
     
     def get_extraction_generator(
@@ -73,11 +50,16 @@ class Extracter:
             leave=True,
         )
 
-        mentor_factory = MentorFactory()
         for mentor_extract in progress_bar:
-            mentor = mentor_factory.get_financial_mentor(mentor_extract.id)
-            progress_bar.set_postfix({"mentor": mentor.mentor_name})
-            docs = self.extract(mentor)
+            progress_bar.set_postfix({"mentor": mentor_extract.name})
+            docs = self.extract(mentor_extract)
+            mentor = Mentor(
+                id = mentor_extract.id,
+                mentor_name = mentor_extract.name,
+                mentor_expertise = mentor_extract.expertise,
+                mentor_perspective = mentor_extract.perspective,
+                mentor_style = mentor_extract.style,
+            )
             yield mentor, docs
 
         progress_bar.close()

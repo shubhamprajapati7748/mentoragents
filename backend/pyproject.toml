@@ -26,6 +26,7 @@ dependencies = [
     "pydantic>=2.10.6",
     "datasketch>=1.6.5",
     "uvicorn>=0.34.3",
+    "arcadepy>=1.6.0",
 ]
 
 [tool.setuptools]

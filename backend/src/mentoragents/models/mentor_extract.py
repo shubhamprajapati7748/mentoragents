@@ -11,10 +11,24 @@ class MentorExtract(BaseModel):
 
     Args:
         id (str) : Unique identifier for the mentor.
-        urls (List[str]) : List of URLs with information about the mentor. 
+        name (str) : Name of the mentor.
+        expertise (str) : Expertise of the mentor.
+        perspective (str) : Perspective of the mentor.
+        style (str) : Style of the mentor.
+        image_url (str) : Image URL of the mentor.
+        twitter_handle (str) : Twitter handle of the mentor.
+        pdf (List[str]) : List of PDF URLs with information about the mentor.
     """
     id : str = Field(description = "Unique identifier for the mentor")
-    urls : List[str] = Field(description = "List of URLs with information about the mentor")
+    name : str = Field(description = "Name of the mentor")
+    expertise : str = Field(description = "Expertise of the mentor")
+    perspective : str = Field(description = "Perspective of the mentor")
+    style : str = Field(description = "Style of the mentor")
+    image_url : str = Field(description = "Image URL of the mentor")
+    twitter_handle : str = Field(description = "Twitter handle of the mentor")
+    pdf : List[str] = Field(description = "List of PDF URLs with information about the mentor")
+    websites : List[str] = Field(description = "List of websites with information about the mentor")
+    youtube_videos : List[str] = Field(description = "List of YouTube videos with information about the mentor")
 
     @classmethod
     def from_json(cls, metadata_file: Path) -> list["MentorExtract"]:
