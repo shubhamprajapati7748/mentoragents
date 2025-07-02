@@ -1,9 +1,8 @@
 from langchain_core.documents import Document
-from loguru import logger
 from mentoragents.models.mentor_extract import MentorExtract
-from arcadepy import Arcade
-import os
 from mentoragents.core.config import settings
+from arcadepy import Arcade
+from loguru import logger
 
 def extract_twitter_tweets(mentor_extract : MentorExtract, max_tweets : int = 100) -> list[Document]:
     """Extract tweets from Twitter for a given mentor.
@@ -17,9 +16,10 @@ def extract_twitter_tweets(mentor_extract : MentorExtract, max_tweets : int = 10
     logger.info(f"Extracting tweets from Twitter for {mentor_extract.id}")
     ARCADE_API_KEY = settings.ARCADE_API_KEY
     USER_ID = settings.ARCADE_USER_ID
-    client = Arcade(api_key=ARCADE_API_KEY)
     TOOL_NAME = "X.SearchRecentTweetsByUsername"
 
+    client = Arcade(api_key=ARCADE_API_KEY)
+   
     all_tweets = get_all_tweets(client, mentor_extract.twitter_handle, USER_ID, TOOL_NAME, max_tweets)
     documents : list[Document] = list[Document]()
     for tweet in all_tweets:

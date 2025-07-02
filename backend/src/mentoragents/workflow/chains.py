@@ -22,7 +22,7 @@ class Chains:
         Get the chain for the mentor response.
         """
         system_message = MENTOR_CHARACTER_PROMPT
-        model = self.openai_model.bind_tools(self.tools)
+        model = self.groq_model.bind_tools(self.tools)
         prompt = ChatPromptTemplate.from_messages(
             [
                 ("system", system_message.prompt),
@@ -44,7 +44,7 @@ class Chains:
             ],
             template_format = "jinja2"
         )
-        return prompt | self.openai_model 
+        return prompt | self.groq_model 
 
     def get_context_summary_chain(self):
         """

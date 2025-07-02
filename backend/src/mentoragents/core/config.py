@@ -35,6 +35,12 @@ class Settings(BaseSettings):
         RAG_CHUNK_SIZE (int): The chunk size for the RAG service.
         EVALUATION_DATASET_FILE_PATH (Path): The path to the evaluation dataset file.
         EXTRACTION_METADATA_FILE_PATH (Path): The path to the extraction metadata file.
+        ARCADE_API_KEY (str): The API key for the Arcade services.
+        ARCADE_USER_ID (str): The Twitter user ID for the Arcade services.
+        LANGSMITH_API_KEY (str): The API key for the LangSmith services.
+        LANGSMITH_TRACING (bool): Whether to enable tracing for the LangSmith services.
+        LANGSMITH_ENDPOINT (str): The endpoint for the LangSmith services.
+        LANGSMITH_PROJECT (str): The project name for the LangSmith services.
     """
 
     PROJECT_NAME : str = "MentorAgents"
@@ -118,6 +124,12 @@ class Settings(BaseSettings):
     # --- Arcade Configuration ---
     ARCADE_API_KEY : str
     ARCADE_USER_ID : str
+
+    # --- LangSmith Configuration ---
+    LANGSMITH_API_KEY : str
+    LANGSMITH_TRACING : str = "true"
+    LANGSMITH_ENDPOINT : str = "https://api.smith.langchain.com"
+    LANGSMITH_PROJECT : str = "mentoragents"
 
     model_config = SettingsConfigDict(
         env_file=".env",

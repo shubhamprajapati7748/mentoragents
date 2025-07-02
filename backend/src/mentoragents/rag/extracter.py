@@ -8,6 +8,7 @@ from mentoragents.models.mentor_extract import MentorExtract
 from mentoragents.rag.ingest.extract_wikipedia import extract_wikipedia
 from mentoragents.rag.ingest.extract_twitter_tweets import extract_twitter_tweets
 from mentoragents.rag.ingest.extract_pdf_contents import extract_pdf_contents
+from mentoragents.rag.ingest.extract_youtube_transcripts import extract_youtube_transcripts
 
 class Extracter:
     def __init__(self):
@@ -27,6 +28,7 @@ class Extracter:
         docs.extend(extract_wikipedia(mentor_extract))
         docs.extend(extract_twitter_tweets(mentor_extract))
         docs.extend(extract_pdf_contents(mentor_extract))
+        docs.extend(extract_youtube_transcripts(mentor_extract))
         logger.info(f"Extracted {len(docs)} docs for {mentor_extract.name}")
         return docs 
     

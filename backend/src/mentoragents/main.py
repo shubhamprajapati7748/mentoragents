@@ -13,6 +13,7 @@ from mentoragents.utils.generate_response import get_response, get_streaming_res
 from mentoragents.utils.reset_conversation import reset_conversation_state
 from mentoragents.models.mentor_factory import MentorFactory
 from mentoragents.workflow.graph import MentorGraph
+import os
 
 # Application state management 
 class ApplicationState:
@@ -79,6 +80,11 @@ app.exception_handler(RequestValidationError)(validation_exception_handler)
 app.exception_handler(ValidationError)(validation_exception_handler)
 app.exception_handler(PermissionException)(permission_exception_handler)
 app.exception_handler(NotFoundException)(not_found_exception_handler)
+
+os.environ['LANGSMITH_API_KEY'] = settings.LANGSMITH_API_KEY
+os.environ['LANGSMITH_PROJECT'] = settings.LANGSMITH_PROJECT
+os.environ['LANGSMITH_TRACING'] = settings.LANGSMITH_TRACING
+os.environ['LANGSMITH_ENDPOINT'] = settings.LANGSMITH_ENDPOINT
 
 @app.get("/", response_class=HTMLResponse, include_in_schema=False)
 async def show_docs_reference() -> HTMLResponse:

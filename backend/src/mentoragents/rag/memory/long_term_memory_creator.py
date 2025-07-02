@@ -44,18 +44,27 @@ class LongTermMemoryCreator:
             logger.warning("No mentors to extract. Exiting...")
         
         # First clear the long term memory collection to avoid duplicates
+        logger.info("Clearing long term memory collection")
         self.mongo_client_wrapper.clear_collection()
+        logger.info("Long term memory collection cleared")
 
         # Extract documents from sources
+        logger.info("Extracting documents from sources")
         extraction_generator = self.extractor.get_extraction_generator(mentors)
+        logger.info("Documents extracted from sources")
 
         # Ingest documents into the long term memory collection
+        logger.info("Ingesting documents into the long term memory collection")
         for _, docs in extraction_generator:
             chunked_docs = self.splitter.split_documents(docs)
             chunked_docs = self.deduplicate_documents.remove_duplicates(chunked_docs)
             self.retriever.vectorstore.add_documents(chunked_docs)
+        logger.info("Documents ingested into the long term memory collection")
 
+        # Create index
+        logger.info("Creating index")
         self.__create_index()
+        logger.info("Index created")
 
     def __create_index(self) -> None:
         with self.mongo_client_wrapper as client:
