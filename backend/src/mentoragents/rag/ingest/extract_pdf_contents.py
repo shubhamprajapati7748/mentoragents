@@ -19,8 +19,7 @@ def extract_pdf_contents(mentor_extract : MentorExtract) -> list[Document]:
                 "mentor_id": mentor_extract.id,
                 "mentor_name": mentor_extract.name,
                 "source": "pdf",
-                "source_url": pdf_url,
-                "page_number": doc.metadata["page"]
+                "source_url": pdf_url
             }
         )
         documents.append(document)
