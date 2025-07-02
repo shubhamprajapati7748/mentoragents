@@ -24,14 +24,9 @@ MentorAgents is an AI-powered platform where users interact with agents modeled 
 - **Groq** - Fast LLM inference
 - **Sentence Transformers** - Text embeddings for RAG
 
-### Frontend
+### Frontend - Todo
 - **React** - Modern frontend framework
 - **Interactive UI** - Gamified chat experience
-
-### AI & ML
-- **RAG (Retrieval Augmented Generation)** - Knowledge-enhanced responses
-- **Text Embeddings** - Semantic search capabilities
-- **Memory Management** - Context preservation across conversations
 
 ## 🏗 Architecture
 
@@ -80,7 +75,7 @@ MentorAgents is an AI-powered platform where users interact with agents modeled 
 
 1. **Clone the repository**
    ```bash
-   git clone https://github.com/yourusername/mentoragents.git
+   https://github.com/shubhamprajapati7748/mentoragents.git
    cd mentoragents/backend
    ```
 
@@ -99,26 +94,19 @@ MentorAgents is an AI-powered platform where users interact with agents modeled 
    # Edit .env with your API keys and configuration
    ```
 
-   Required environment variables:
-   ```
-   GROQ_API_KEY=your_groq_api_key
-   OPENAI_API_KEY=your_openai_api_key
-   MONGO_URI=your_mongodb_connection_string
-   COMET_API_KEY=your_comet_api_key (optional)
-   ```
-
 4. **To Create long term memory**
-    ```bash
+   ```bash
    python src/mentoragents/tools/create_long_term_memory.py
    ```
 
 4. **Run the backend**
     ```bash
-   cd backend
    uvicorn mentoragents.main:app --reload --host 127.0.0.1 --port 8080
    ```
 
-   The API will be available at `http://localhost:8080`
+   The API will be available at `http://127.0.0.1:8080`.
+
+   The API docs will be available at  `http://127.0.0.1:8080/docs`.
 
 <!-- ### Frontend Setup
 
@@ -129,11 +117,6 @@ npm start
 ```
 
 The web app will be available at `http://localhost:3000` -->
-
-## 📖 API Documentation
-
-Once the backend is running, visit:
-- **Swagger UI**: `http://localhost:8080/docs`
 
 ## 🤖 Available Mentors
 
@@ -164,14 +147,14 @@ Key configuration options in `backend/src/mentoragents/core/config.py`:
 - **Database Settings**: MongoDB collections and connection settings
 - **API Settings**: CORS, server configuration
 
-## 🛣 Roadmap
+<!-- ## 🛣 Roadmap
 
 - [ ] Expand mentor library with more personalities
 - [ ] Add voice chat capabilities
 - [ ] Implement mentor-specific knowledge domains
 - [ ] Mobile app development
 - [ ] Advanced analytics and insights
-- [ ] Multi-language support
+- [ ] Multi-language support -->
 
 ## 🤝 Contributing
 
@@ -192,7 +175,6 @@ This project is licensed under the MIT License - see the [LICENSE](LICENSE) file
 - LangChain and LangGraph communities for AI agent frameworks
 - The mentors whose wisdom inspired this project
 - Open source contributors making AI accessible
-
 
 ## **📧 Contact & Support**
 
