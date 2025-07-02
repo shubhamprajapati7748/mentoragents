@@ -55,7 +55,7 @@ class LongTermMemoryCreator:
             chunked_docs = self.deduplicate_documents.remove_duplicates(chunked_docs)
             self.retriever.vectorstore.add_documents(chunked_docs)
 
-        self.__create_index() # Todo : Uncomment this when the index is created
+        self.__create_index()
 
     def __create_index(self) -> None:
         with self.mongo_client_wrapper as client:

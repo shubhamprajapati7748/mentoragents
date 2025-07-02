@@ -27,6 +27,7 @@ dependencies = [
     "datasketch>=1.6.5",
     "uvicorn>=0.34.3",
     "arcadepy>=1.6.0",
+    "pypdf>=5.7.0",
 ]
 
 [tool.setuptools]

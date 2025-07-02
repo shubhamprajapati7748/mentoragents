@@ -26,7 +26,7 @@ class MentorExtract(BaseModel):
     style : str = Field(description = "Style of the mentor")
     image_url : str = Field(description = "Image URL of the mentor")
     twitter_handle : str = Field(description = "Twitter handle of the mentor")
-    pdf : List[str] = Field(description = "List of PDF URLs with information about the mentor")
+    pdfs : List[str] = Field(description = "List of PDF URLs with information about the mentor")
     websites : List[str] = Field(description = "List of websites with information about the mentor")
     youtube_videos : List[str] = Field(description = "List of YouTube videos with information about the mentor")
 

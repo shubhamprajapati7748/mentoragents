@@ -14,18 +14,16 @@ def extract_twitter_tweets(mentor_extract : MentorExtract, max_tweets : int = 10
     Returns:
         list[Document] : List of documents extracted from Twitter.
     """
-    logger.info(f"Extracting tweets from Twitter for {mentor_extract.name}")
-
+    logger.info(f"Extracting tweets from Twitter for {mentor_extract.id}")
     ARCADE_API_KEY = settings.ARCADE_API_KEY
     USER_ID = settings.ARCADE_USER_ID
     client = Arcade(api_key=ARCADE_API_KEY)
     TOOL_NAME = "X.SearchRecentTweetsByUsername"
 
     all_tweets = get_all_tweets(client, mentor_extract.twitter_handle, USER_ID, TOOL_NAME, max_tweets)
-
-    tweets = []
+    documents : list[Document] = list[Document]()
     for tweet in all_tweets:
-        tweets.append(Document(
+        document = Document(
             page_content = tweet["text"],
             metadata = {
                 "mentor_id" : mentor_extract.id,
@@ -33,10 +31,10 @@ def extract_twitter_tweets(mentor_extract : MentorExtract, max_tweets : int = 10
                 "source" : "twitter",
                 "source_url" : tweet["tweet_url"],
             }
-        ))
-
-    logger.info(f"Extracted {len(tweets)} tweets from Twitter for {mentor_extract.name}")
-    return tweets
+        )
+        documents.append(document)
+    logger.info(f"Extracted {len(documents)} tweets from Twitter for {mentor_extract.id}")
+    return documents
 
 def get_all_tweets(client, username: str, user_id: str, tool_name: str = "X.SearchRecentTweetsByUsername", max_tweets: int = 100) -> list:
     """

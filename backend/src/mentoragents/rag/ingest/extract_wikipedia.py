@@ -12,7 +12,8 @@ def extract_wikipedia(mentor_extract : MentorExtract) -> list[Document]:
         Returns:
             list[Document] : List of documents extracted from Wikipedia.
         """
-        logger.info(f"Extracting docs from Wikipedia for {mentor_extract.name}")
+        logger.info(f"Extracting docs from Wikipedia for {mentor_extract.id}")
+        documents : list[Document] = list[Document]()
         data_loader = WikipediaLoader(
             query = mentor_extract.name,
             lang = "en",
@@ -21,11 +22,16 @@ def extract_wikipedia(mentor_extract : MentorExtract) -> list[Document]:
         )
 
         docs = data_loader.load()
-
         for doc in docs:
-            doc.metadata["mentor_id"] = mentor_extract.id
-            doc.metadata["mentor_name"] = mentor_extract.name
-            doc.metadata["source_url"] = doc.metadata["source"]
-            doc.metadata["source"] = "wikipedia"
-        logger.info(f"Extracted {len(docs)} docs from Wikipedia for {mentor_extract.name}")
-        return docs 
+            document = Document(
+                page_content = doc.page_content,
+                metadata = {
+                    "mentor_id" : mentor_extract.id,
+                    "mentor_name" : mentor_extract.name,
+                    "source_url" : doc.metadata["source"],
+                    "source" : "wikipedia"
+                }
+            )
+            documents.append(document)
+        logger.info(f"Extracted {len(documents)} docs from Wikipedia for {mentor_extract.id}")
+        return documents 
