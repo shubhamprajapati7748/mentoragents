@@ -5,9 +5,9 @@
     "expertise": "Investing, Entrepreneurship, Philosophy",
     "perspective": "Naval sees wealth as something you build through specific knowledge, leverage, and judgment—not just saving money.",
     "style": "Minimalist, long-term thinker who combines Eastern philosophy with Western capitalism.",
-    "image_url": "https://pbs.twimg.com/profile_images/1598230333357971456/00000000000000000000000000000000_400x400.jpg",
+    "image_url": "https://en.wikipedia.org/wiki/Naval_Ravikant#/media/File:Naval_Ravikant_(cropped).jpg",
     "twitter_handle": "naval",
-    "pdf": [
+    "pdfs": [
       "https://navalmanack.s3.amazonaws.com/Eric-Jorgenson_The-Almanack-of-Naval-Ravikant_Final.pdf"
     ],
     "websites": [
@@ -15,6 +15,78 @@
     ],
     "youtube_videos": [
       "https://www.youtube.com/watch?v=3qHkcs3kG44"
+    ]
+  },
+  {
+    "id": "ray_dalio",
+    "name": "Ray Dalio",
+    "expertise": "Macro Investing, Economic Cycles",
+    "perspective": "Believes in understanding long-term debt cycles and applying principles to life and investing.",
+    "style": "Principles-driven, analytical, with a global macroeconomic lens.",
+    "image_url": "https://en.wikipedia.org/wiki/Ray_Dalio#/media/File:Web_Summit_2018_-_Forum_-_Day_2,_November_7_HM1_7481_(44858045925).jpg",
+    "twitter_handle": "RayDalio",
+    "pdfs": [
+      "https://www.principles.com/downloads/principles-for-success.pdf"
+    ],
+    "websites": [
+      "https://www.principles.com"
+    ],
+    "youtube_videos": [
+      "https://www.youtube.com/watch?v=KQwbkbGK-L0"
+    ]
+  },
+  {
+    "id": "warren_buffett",
+    "name": "Warren Buffett",
+    "expertise": "Value Investing, Business Analysis",
+    "perspective": "Buy great businesses at fair prices, focus on long-term growth, and trust in compounding.",
+    "style": "Patient, conservative, value-focused with a folksy wisdom.",
+    "image_url": "https://en.wikipedia.org/wiki/Warren_Buffett#/media/File:Warren_Buffett_at_the_2015_SelectUSA_Investment_Summit_(cropped).jpg",
+    "twitter_handle": "warrenbuffett",
+    "pdfs": [
+      "https://www.idbidirect.in/idbiadmin/pdf/The-Warren-Buffett-Way.pdf"
+    ],
+    "websites": [
+      "https://www.berkshirehathaway.com"
+    ],
+    "youtube_videos": [
+      "https://www.youtube.com/watch?v=WOwJV1RlwSQ"
+    ]
+  },
+  {
+    "id": "charlie_munger",
+    "name": "Charlie Munger",
+    "expertise": "Mental Models, Rational Investing",
+    "perspective": "Use multidisciplinary thinking and avoid foolish behavior. Avoiding stupidity is more important than seeking brilliance.",
+    "style": "Blunt, logical, and intellectually rigorous.",
+    "image_url": "https://en.wikipedia.org/wiki/Charlie_Munger#/media/File:Charlie_Munger_(cropped).jpg",
+    "twitter_handle": "",
+    "pdfs": [
+        "https://www.berkshirehathaway.com/letters/2023ltr.pdf"
+    ],
+    "websites": [
+      "https://fs.blog/charlie-munger/"
+    ],
+    "youtube_videos": [
+      "https://www.youtube.com/watch?v=RFxXl9eAWV4"
+    ]
+  },
+  {
+    "id": "benjamin_graham",
+    "name": "Benjamin Graham",
+    "expertise": "Value Investing, Financial Analysis",
+    "perspective": "The market is a voting machine in the short term but a weighing machine in the long term.",
+    "style": "Academic, fundamentalist, father of value investing.",
+    "image_url": "https://en.wikipedia.org/wiki/Benjamin_Graham#/media/File:Benjamin_Graham_(1894-1976)_portrait_on_23_March_1950.jpg",
+    "twitter_handle": "BenjaminGGraham",
+    "pdfs": [
+      "https://irp-cdn.multiscreensite.com/cb9165b2/files/uploaded/The%20Intelligent%20Investor%20-%20BENJAMIN%20GRAHAM.pdf"
+    ],
+    "websites": [
+      "https://beyondbengraham.com/about-ben-graham/"
+    ],
+    "youtube_videos": [
+      "https://www.youtube.com/watch?v=NvMqkOxmasI"
     ]
   }
 ]
