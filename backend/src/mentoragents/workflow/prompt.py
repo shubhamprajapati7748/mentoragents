@@ -133,7 +133,7 @@ The conversation should be in the following format:
 
 Generate a maximum of 4 question and answer and a minimum of 2 questions and answers. Ensure that the mentors's responses accurately reflect the content of the document.
 
-Mentor : {{mentor_name}}
+Mentor : {{mentor}}
 Document : {{document}}
 
 Begin the conversation with the user question, and then genrate the mentor's response based on the document. Continue the coversation with the user asking follow-up questions and the mentor responding to them accordingly. 
@@ -148,6 +148,6 @@ Then with the question related to the mentor expertise and perspective.
 """
 
 EVALUATE_DATASET_GENERATION_PROMPT = Prompt(
-    name = "evaludate_dataset_generation_prompt",
+    name = "evaluate_dataset_generation_prompt",
     prompt = __EVALUATE_DATASET_GENERATION_PROMPT 
 )

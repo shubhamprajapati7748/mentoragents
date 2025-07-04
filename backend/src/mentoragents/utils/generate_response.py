@@ -7,6 +7,7 @@ from loguru import logger
 from mentoragents.core.config import settings
 from opik.integrations.langchain import OpikTracer
 import uuid
+import traceback
 
 async def get_response(
     graph_builder : MentorGraph,
@@ -48,10 +49,11 @@ async def get_response(
             checkpoint_collection_name = settings.MONGO_STATE_CHECKPOINT_COLLECTION,
             writes_collection_name = settings.MONGO_STATE_WRITES_COLLECTION
         ) as checkpointer:
+            logger.info("get_response called...")
             graph = graph_builder.compile(checkpointer = checkpointer)
-            # optik_tracer = OpikTracer(
-            #     graph = graph.get_graph(xray = True)
-            # )
+            opik_tracer = OpikTracer(
+                graph = graph.get_graph(xray = True)
+            )
 
             thread_id = (
                 mentor_id if new_thread else f"{mentor_id}-{uuid.uuid4()}"
@@ -59,7 +61,7 @@ async def get_response(
 
             config = {
                 "configurable" : { "thread_id" : thread_id },
-                # "call_backs" : [optik_tracer]
+                "call_backs" : [opik_tracer]
             }
 
             output_state = await graph.ainvoke(
@@ -73,10 +75,11 @@ async def get_response(
                 },
                 config = config
             )
+            logger.info("get_response completed...")
             last_message = output_state["messages"][-1]
             return last_message.content, MentorState(**output_state)
     except Exception as e:
-        raise RuntimeError(f"Error running conversation workflow: {str(e)}") from e 
+        raise RuntimeError(f"Error running conversation workflow: {str(e)} ; {traceback.format_exc()}") from e 
     
 
 async def get_streaming_response(
@@ -118,10 +121,11 @@ async def get_streaming_response(
             checkpoint_collection_name = settings.MONGO_STATE_CHECKPOINT_COLLECTION,
             writes_collection_name = settings.MONGO_STATE_WRITES_COLLECTION
         ) as checkpointer:
+            logger.info("get_streaming_response called...")
             graph = graph_builder.compile(checkpointer = checkpointer)
-            # opik_tracer = OpikTracer(
-            #     graph = graph.get_graph(xray = True)
-            # )
+            opik_tracer = OpikTracer(
+                graph = graph.get_graph(xray = True)
+            )
 
             thread_id = (
                 mentor_id if new_thread else f"{mentor_id}-{uuid.uuid4()}"
@@ -129,7 +133,7 @@ async def get_streaming_response(
 
             config = {
                 "configurable" : { "thread_id" : thread_id },
-                # "call_backs" : [opik_tracer]
+                "call_backs" : [opik_tracer]
             }
 
             async for chunk in graph.astream(
@@ -146,9 +150,10 @@ async def get_streaming_response(
             ):
                 if chunk[1]["langgraph_node"] == "conversation_node" and isinstance(chunk[0], AIMessageChunk):
                     yield chunk[0].content
+            logger.info("get_streaming_response completed...")
 
     except Exception as e:
-        raise RuntimeError(f"Error running streaming conversation workflow: {str(e)}") from e 
+        raise RuntimeError(f"Error running conversation workflow: {str(e)} ; {traceback.format_exc()}") from e 
     
 def __format_messages(messages : str | list[str] | list[dict[str, Any]]) -> list[Union[HumanMessage, AIMessage]]:
     """

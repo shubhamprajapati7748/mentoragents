@@ -5,10 +5,10 @@ from mentoragents.core.config import settings
 
 def should_summarize_conversation(
     state: MentorState,
-) -> Literal["summarize_conversation_node", "__end__"]:
+) -> Literal["summarize_conversations_node", "__end__"]:
     messages = state["messages"]
 
     if len(messages) > settings.TOTAL_MESSAGES_SUMMARY_TRIGGER:
-        return "summarize_conversation_node"
+        return "summarize_conversations_node"
 
     return END

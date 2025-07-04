@@ -131,13 +131,13 @@ class MongoClientWrapper(Generic[T]):
             logger.error(f"Error ingesting documents : {e}")
             raise 
 
-    def fetch_documents(self, query : dict, limit : int = 10) -> list[T]:
+    def fetch_documents(self, query : dict, limit : int | None = 2) -> list[T]:
         """
         Retrieve documents from the collection based on the query and limit.
 
         Args:
             query (dict) : MongoDB query filter to apply. 
-            limit (int) : Maximum number of documents to retrieve.
+            limit (int | None) : Maximum number of documents to retrieve. If None, all documents are retrieved.
 
         Returns:
             list[T] : List of Pydantic model instances matching the query criteria. 
@@ -145,9 +145,12 @@ class MongoClientWrapper(Generic[T]):
         Raise: 
             errors.PyMongoError: If the query operation fails.
         """
-        try: 
-            documents = self.collection.find(query).limit(limit)
-            logger.debug(f"Fetched {len(documents)} documents with query: {query}")
+        try:
+            if limit is not None:
+                documents = self.collection.find(query).limit(limit)
+            else:
+                documents = self.collection.find(query)
+            # logger.debug(f"Fetched {len(documents)} documents with query: {query}")
             return self.__parse_documents(documents)
         except errors.PyMongoError as e:
             logger.error(f"Error fetching documents : {e}")
@@ -166,18 +169,28 @@ class MongoClientWrapper(Generic[T]):
         """
         parsed_documents = []
         for doc in documents:
-            for key, value in doc.items():
-                if isinstance(value, ObjectId):
-                    doc[key] = str(value)
-                
-            _id = doc.pop("_id", None)
-            doc["id"] = _id 
-
-            parsed_doc = self.model.model_validate(doc)
+            parsed_doc = self.__parse_single_document(doc)
             parsed_documents.append(parsed_doc)
         
         return parsed_documents
      
+    def __parse_single_document(self, document : dict) -> T:
+        """Parse a single MongoDB document to a Pydantic model instance.
+        
+        Args:
+            document (dict) : MongoDB document to parse.
+
+        Returns:
+            T : Pydantic model instance.
+        """        
+        for key, value in document.items(): 
+            if isinstance(value, ObjectId):
+                document[key] = str(value)
+
+        # _id = document.pop("_id", None)
+        # document["_id"] = _id 
+        return self.model.model_validate(document)
+
     def get_collection_count(self) -> int:
         """
         Get the number of documents in the collection.
@@ -190,7 +203,6 @@ class MongoClientWrapper(Generic[T]):
         """
         try: 
             return self.collection.count_documents({})
-            logger.debug(f"Collection contains {count} documents.")
         except errors.PyMongoError as e:
             logger.error(f"Error getting collection count : {e}")
             raise 

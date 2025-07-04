@@ -71,6 +71,7 @@ class Settings(BaseSettings):
         description="Connection URI for the local MongoDB Atlas instance.",
     )
     MONGO_DB_NAME : str = "mentoragents"
+    MONGO_MENTORS_COLLECTION : str = "mentors"
     MONGO_STATE_CHECKPOINT_COLLECTION : str = "mentor_state_checkpoints"
     MONGO_STATE_WRITES_COLLECTION : str = "mentor_state_writes"
     MONGO_LONG_TERM_MEMORY_COLLECTION : str = "mentor_long_term_memory"
@@ -79,8 +80,9 @@ class Settings(BaseSettings):
     COMET_API_KEY : str | None = Field(
         default=None, description="API key for Comet ML and Opik services."
     )
+
     COMET_PROJECT : str = Field(
-        default="mentoragents_course",
+        default="mentor_agents",
         description="Project name for Comet ML and Opik tracking.",
     )
 
@@ -118,8 +120,8 @@ class Settings(BaseSettings):
         return v
 
     # --- Paths Configuration ---
-    # EVALUATION_DATASET_FILE_PATH : Path = Path("data/evaluation_dataset.json")
-    EXTRACTION_METADATA_FILE_PATH : Path = Path("src/mentoragents/rag/ingest/extraction_metadata.json")
+    EXTRACTION_METADATA_FILE_PATH : Path = Path("src/mentoragents/rag/data/extraction_metadata.json")
+    EVALUATION_DATASET_FILE_PATH : Path = Path("src/mentoragents/rag/data/evaluation_dataset.json")
 
     # --- Arcade Configuration ---
     ARCADE_API_KEY : str

@@ -36,17 +36,13 @@ class MentorExtract(BaseModel):
             mentors_data = json.load(f)
             
         return [cls(**mentor) for mentor in mentors_data]
-   
-    # @classmethod 
-    # def from_json(cls, metadata_file : Path) -> list["MentorExtract"] : 
-    #     """Loads mentor extract data from a JSON file.
 
-    #     Args:
-    #         metadata_file (Path) : Path to the JSON file containing mentor extract data.
-
-    #     Returns:
-    #         list[MentorExtract] : List of MentorExtract objects loaded from the JSON file.
-    #     """
-    #     with open(metadata_file, "r") as f : 
-    #         mentors_data = json.load(f)
-    #     return [cls(**mentor) for mentor in mentors_data]
+    @classmethod
+    def get_mentor(cls, mentor_extract : "MentorExtract") -> Mentor:
+        return Mentor(
+            id = mentor_extract.id,
+            mentor_name = mentor_extract.name,
+            mentor_expertise = mentor_extract.expertise,
+            mentor_perspective = mentor_extract.perspective,
+            mentor_style = mentor_extract.style,
+        )

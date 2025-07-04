@@ -11,8 +11,10 @@ from mentoragents.core.handlers import validation_exception_handler, permission_
 from pydantic import BaseModel
 from mentoragents.utils.generate_response import get_response, get_streaming_response
 from mentoragents.utils.reset_conversation import reset_conversation_state
-from mentoragents.models.mentor_factory import MentorFactory
 from mentoragents.workflow.graph import MentorGraph
+from mentoragents.infra.opik_utils import configure_opik
+from mentoragents.db.client import MongoClientWrapper
+from mentoragents.models.mentor_extract import MentorExtract
 import os
 
 # Application state management 
@@ -22,6 +24,12 @@ class ApplicationState:
     
     async def initialize(self):
         graph = MentorGraph()
+        self.mentors_collection = MongoClientWrapper(
+            model = MentorExtract,
+            collection_name = settings.MONGO_MENTORS_COLLECTION,
+            database_name = settings.MONGO_DB_NAME,
+            mongodb_uri = settings.MONGO_URI
+        )
         self.graph_builder = graph.build()
 
     async def shutdown(self):
@@ -44,6 +52,7 @@ app = FastAPI(
 async def startup_event():
     app.state.app_state = ApplicationState()
     await app.state.app_state.initialize()
+    configure_opik()
     
 @app.on_event("shutdown")
 async def shutdown_event():
@@ -74,6 +83,9 @@ app.add_middleware(
 # Dependency injection
 async def get_graph_builder():
     return app.state.app_state.graph_builder
+
+async def get_mentor_collection():
+    return app.state.app_state.mentors_collection
 
 # Exception handlers
 app.exception_handler(RequestValidationError)(validation_exception_handler)
@@ -112,21 +124,25 @@ async def show_docs_reference() -> HTMLResponse:
 @app.post("/chat")
 async def chat(
     chat_messages : ChatMessage,
-    graph_builder : MentorGraph = Depends(get_graph_builder)
+    graph_builder : MentorGraph = Depends(get_graph_builder),
+    mentors_collection : MongoClientWrapper = Depends(get_mentor_collection)
 ):
     """
     Handle the chat message and return the response.
     """
     try:
-        mentor = MentorFactory.get_financial_mentor(chat_messages.mentor_id)
+        mentor = mentors_collection.fetch_documents(query = { "id" : chat_messages.mentor_id }, limit = 1)[0]
+        if mentor is None:
+            raise NotFoundException(f"Mentor with id {chat_messages.mentor_id} not found")
+
         response, _ = await get_response(
             graph_builder = graph_builder,
             messages = chat_messages.message,
             mentor_id = chat_messages.mentor_id,
-            mentor_name = mentor.mentor_name,
-            mentor_expertise = mentor.mentor_expertise,
-            mentor_perspective = mentor.mentor_perspective,
-            mentor_style = mentor.mentor_style,
+            mentor_name = mentor.name,
+            mentor_expertise = mentor.expertise,
+            mentor_perspective = mentor.perspective,
+            mentor_style = mentor.style,
             mentor_context = ""
         )
         return {
@@ -139,7 +155,8 @@ async def chat(
 @app.websocket("/ws/chat")
 async def websocket_chat(
     websocket : WebSocket,
-    graph_builder : MentorGraph = Depends(get_graph_builder)
+    graph_builder : MentorGraph = Depends(get_graph_builder),
+    mentors_collection : MongoClientWrapper = Depends(get_mentor_collection)
 ):
     """
     Handle the websocket chat message and return the response.
@@ -158,18 +175,19 @@ async def websocket_chat(
             try:
                 message = data["message"]
                 mentor_id = data["mentor_id"]
-
-                mentor = MentorFactory.get_financial_mentor(mentor_id)
+                mentor = mentors_collection.fetch_documents(query = { "id" : mentor_id }, limit = 1)[0]
+                if mentor is None:
+                    raise NotFoundException(f"Mentor with id {mentor_id} not found")
 
                 # Use streaming response to get the response
                 streaming_response = get_streaming_response(
                     graph_builder = graph_builder,
                     messages = message,
                     mentor_id = mentor_id,
-                    mentor_name = mentor.mentor_name,
-                    mentor_expertise = mentor.mentor_expertise,
-                    mentor_perspective = mentor.mentor_perspective,
-                    mentor_style = mentor.mentor_style,
+                    mentor_name = mentor.name,
+                    mentor_expertise = mentor.expertise,
+                    mentor_perspective = mentor.perspective,
+                    mentor_style = mentor.style,
                     mentor_context = ""
                 )
 
@@ -191,7 +209,6 @@ async def websocket_chat(
         pass
     
 
-
 @app.post("/reset-memory")
 async def reset_memory():
     """
@@ -202,7 +219,6 @@ async def reset_memory():
         return result
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
-
 
 
 if __name__ == "__main__":

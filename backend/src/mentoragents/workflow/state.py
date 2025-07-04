@@ -12,15 +12,19 @@ class MentorState(MessagesState):
     summary : str  
 
 
-def state_to_str(state : MentorState) -> str: 
-    """Convert the MentorState to String"""
+def state_to_str(state: MentorState) -> str:
+    if "summary" in state and bool(state["summary"]):
+        conversation = state["summary"]
+    elif "messages" in state and bool(state["messages"]):
+        conversation = state["messages"]
+    else:
+        conversation = ""
+
     return f"""
-    MentorState(
-        mentor_name = {state.mentor_name},
-        mentor_expertise = {state.mentor_expertise},
-        mentor_perspective = {state.mentor_perspective},
-        mentor_style = {state.mentor_style},
-        mentor_context = {state.mentor_context},
-        summary = {state.summary}
-    )
-    """
+        MentorState(mentor_context={state["mentor_context"]}, 
+        mentor_name={state["mentor_name"]}, 
+        mentor_expertise={state["mentor_expertise"]}, 
+        mentor_perspective={state["mentor_perspective"]}, 
+        mentor_style={state["mentor_style"]}, 
+        conversation={conversation})
+        """

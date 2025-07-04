@@ -4,20 +4,18 @@ from langchain_mongodb.retrievers import MongoDBAtlasHybridSearchRetriever
 from mentoragents.rag.retrievers import Retriever
 from mentoragents.rag.splitters import TextSplitter
 from mentoragents.core.config import settings
-from mentoragents.models.mentor import Mentor
 from loguru import logger
 from mentoragents.db.client import MongoClientWrapper
-from mentoragents.rag.extracter import Extracter
+from mentoragents.rag.extractor import Extractor
 from mentoragents.rag.deduplicate_documents import DeduplicateDocuments
 from mentoragents.db.indexes import MongoIndex
-from mentoragents.models.mentor_extract import MentorExtract
 
 class LongTermMemoryCreator:
     def __init__(self, retriever : MongoDBAtlasHybridSearchRetriever, splitter : RecursiveCharacterTextSplitter) -> None:
         self.retriever = retriever
         self.splitter = splitter
         self.deduplicate_documents = DeduplicateDocuments()
-        self.extractor = Extracter()
+        self.extractor = Extractor()
         self.mongo_client_wrapper = MongoClientWrapper(
             model = Document, 
             collection_name = settings.MONGO_LONG_TERM_MEMORY_COLLECTION,
@@ -39,10 +37,7 @@ class LongTermMemoryCreator:
 
         return cls(retriever, splitter)
     
-    def __call__(self, mentors : list[MentorExtract]) -> None:
-        if len(mentors) == 0:
-            logger.warning("No mentors to extract. Exiting...")
-        
+    def __call__(self) -> None:
         # First clear the long term memory collection to avoid duplicates
         logger.info("Clearing long term memory collection")
         self.mongo_client_wrapper.clear_collection()
@@ -50,7 +45,7 @@ class LongTermMemoryCreator:
 
         # Extract documents from sources
         logger.info("Extracting documents from sources")
-        extraction_generator = self.extractor.get_extraction_generator(mentors)
+        extraction_generator = self.extractor.get_extraction_generator()
         logger.info("Documents extracted from sources")
 
         # Ingest documents into the long term memory collection
