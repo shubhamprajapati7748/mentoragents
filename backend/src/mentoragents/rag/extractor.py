@@ -5,6 +5,9 @@ from tqdm import tqdm
 from loguru import logger
 from mentoragents.models.mentor_extract import MentorExtract
 from mentoragents.rag.extractors.extract_wikipedia import extract_wikipedia
+from mentoragents.rag.extractors.extract_twitter_tweets import extract_twitter_tweets
+from mentoragents.rag.extractors.extract_pdf_contents import extract_pdf_contents
+from mentoragents.rag.extractors.extract_youtube_transcripts import extract_youtube_transcripts
 from mentoragents.db.client import MongoClientWrapper
 from mentoragents.core.config import settings
 
@@ -29,9 +32,9 @@ class Extractor:
         logger.info(f"Extracting docs for {mentor_extract.name}")
         docs = []
         docs.extend(extract_wikipedia(mentor_extract))
-        # docs.extend(extract_twitter_tweets(mentor_extract))
-        # docs.extend(extract_pdf_contents(mentor_extract))
-        # docs.extend(extract_youtube_transcripts(mentor_extract))
+        docs.extend(extract_twitter_tweets(mentor_extract))
+        docs.extend(extract_pdf_contents(mentor_extract))
+        docs.extend(extract_youtube_transcripts(mentor_extract))
         logger.info(f"Extracted {len(docs)} docs for {mentor_extract.name}")
         return docs 
     
@@ -48,13 +51,13 @@ class Extractor:
         logger.info(f"Extracting sample data for {mentor_extract.id}")
         docs = []
         wikipedia_docs = extract_wikipedia(mentor_extract)
-        # twitter_docs = extract_twitter_tweets(mentor_extract)
-        # pdf_docs = extract_pdf_contents(mentor_extract)
-        # youtube_docs = extract_youtube_transcripts(mentor_extract)
+        twitter_docs = extract_twitter_tweets(mentor_extract)
+        pdf_docs = extract_pdf_contents(mentor_extract)
+        youtube_docs = extract_youtube_transcripts(mentor_extract)
         docs.extend(wikipedia_docs[:sample_count])
-        # docs.extend(twitter_docs[:sample_count])
-        # docs.extend(pdf_docs[:sample_count])
-        # docs.extend(youtube_docs[:sample_count])
+        docs.extend(twitter_docs[:sample_count])
+        docs.extend(pdf_docs[:sample_count])
+        docs.extend(youtube_docs[:sample_count])
         logger.info(f"Extracted {len(docs)} sample docs for {mentor_extract.id}")
         return docs
         

@@ -120,8 +120,8 @@ class Settings(BaseSettings):
         return v
 
     # --- Paths Configuration ---
-    EXTRACTION_METADATA_FILE_PATH : Path = Path("src/mentoragents/rag/data/extraction_metadata.json")
-    EVALUATION_DATASET_FILE_PATH : Path = Path("src/mentoragents/rag/data/evaluation_dataset.json")
+    EXTRACTION_METADATA_FILE_PATH : Path = Path("data/extraction_metadata.json")
+    EVALUATION_DATASET_FILE_PATH : Path = Path("data/evaluation_dataset.json")
 
     # --- Arcade Configuration ---
     ARCADE_API_KEY : str
